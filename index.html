@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Todo</title>
+    <style>
+        table {
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .submit-btn {
+            margin: 30px;
+            border: none;
+            background: green;
+            padding: 7px 15px;
+            color: white;
+            letter-spacing: .8px;
+            font-size: 15px;
+        }
+        table, th, td {
+            margin-top: 30px;
+            border: 3px solid white;
+            text-align: center;
+            border-collapse: collapse;
+        }
+        th,td {
+            padding: 5px 30px;
+        }
+        thead{
+            font-size: 20px;
+            background: #FFF455;
+            color: #007F73;
+        }
+        .remove-btn {
+            border: none;
+            background: red;
+            color: white;
+            padding: 5px 10px;
+            letter-spacing: .8px;
+        }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+  <script src="https://www.unpkg.com/react@18.2.0/umd/react.development.js"></script>
+  <script src="https://www.unpkg.com/react-dom@18.2.0/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script type="text/babel">
+    // Create a root for rendering React components
+    let reactRoot = ReactDOM.createRoot(document.getElementById('root'));
+
+    // Component for ToDo List
+    function ToDoList() {
+         // Define state for todo items and input value
+        const [todo, setTodo] = React.useState([]);
+        const [todoValue, setTodoValue] = React.useState('');
+
+        // Handler for input change
+        let handleValue = (e) => {
+            setTodoValue(e.target.value);
+        };
+
+        // Handler for adding new todo item
+        let handleAddValue = (e) => {
+            e.preventDefault();
+            const newTodo = {
+                id: todo.length,
+                text: todoValue,
+                completed: false
+            };
+            setTodo([...todo, newTodo]);
+            setTodoValue('');
+        };
+
+        // Handler for marking todo item as completed
+        let handleComplete = (id) => {
+            const newTodo = todo.map(item =>
+                item.id === id ? { ...item, completed: true} : item
+            );
+            setTodo(newTodo);
+        };
+
+        // Handler for removing todo item
+        const handleRemove = (id) => {
+            const newTodo = todo.filter(todo => todo.id !== id);
+            setTodo(newTodo);
+        };
+
+        // JSX for rendering the todo list
+        return (
+            
+            <form onSubmit={handleAddValue}>
+                <div style={{textAlign: 'center'}}>
+                    <h1 style={{color: '#A0153E'}}>ToDo List</h1>
+                    <input type="text" placeholder='Add new task' value={todoValue} onChange={handleValue} style={{padding: '7px 15px'}} />
+                    <button type="submit" className="submit-btn">Add New Todo</button>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Tasks</th>
+                                <th>Marked as Complete</th>
+                                <th>Delete</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {todo.map((todoItem) => {
+                                return <tr key={todoItem.id}>
+                                    <td><h3 style={{margin: '4px',fontWeight: 500}}>{todoItem.text}</h3></td>
+                                    <td><input type="checkbox" checked={todoItem.completed} onChange={() => handleComplete(todoItem.id)} /></td>
+                                    <td><button className='remove-btn' onClick={() => handleRemove(todoItem.id)}>Remove</button></td>
+                                </tr>
+                            })}
+                        </tbody>
+                    </table>
+                </div>
+            </form>
+        );
+    }
+
+    // Render the ToDoList component to the root element
+    reactRoot.render(<ToDoList />)
+  </script>
+</html>
